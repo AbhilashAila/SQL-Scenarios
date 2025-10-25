@@ -63,3 +63,115 @@
 --Revenue,
 --SUM(Revenue) Over(Order by OrderDate) as Running_Total
 --from Sales_report
+
+--------------------------------------------------------------------------------------------------------
+--create table events (
+--    event VARCHAR(50),
+--    event_dt DATE
+--);
+--insert into events (event, event_dt) VALUES
+--('fail', '2020-01-04'),
+--('success', '2020-01-01'),
+--('success', '2020-01-03'),
+--('success', '2020-01-06'),
+--('fail', '2020-01-05'),
+--('success', '2020-01-02');
+
+
+--Q.3 Write a query to produce the start and end date for each consecutive run of the same event.
+--    Consecutive means the same event occurs in sequential rows ordered by date.
+--    If a run contains only one row, set start_date = end_date.
+
+--With Consective_days as
+--(
+--Select 
+--event,
+--event_dt,
+--Dateadd(Day,-ROW_NUMBER() Over(Partition by event Order by event_dt) ,event_dt) as Dates
+--from events
+--)
+--Select 
+--event,
+--MIN(event_dt) as Start_date,
+--MAX(event_dt) as End_date
+--from Consective_days
+--Group By event,Dates
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+--create table occupations (
+--    Name VARCHAR(50),
+--    Occupation VARCHAR(20)
+--);
+--insert into occupations (Name, Occupation) values
+--('Jenny', 'Doctor'),
+--('Samantha', 'Doctor'),
+--('Ashley', 'Professor'),
+--('Christeen', 'Professor'),
+--('Ketty', 'Professor'),
+--('Meera', 'Singer'),
+--('Priya', 'Singer'),
+--('Jane', 'Actor'),
+--('Julia', 'Actor'),
+--('Maria', 'Actor');
+
+
+4.Pivot the Occupation column in OCCUPATIONS so that each Name is sorted alphabetically.
+--The output should consist of four columns (Doctor, Professor, Singer, and Actor)
+--in that specific order, with their respective names listed alphabetically under each column.
+--Note: Print NULL when there are no more names corresponding to an occupation.
+
+--With cte as
+--(
+--Select 
+--Occupation,
+--Name,
+--ROW_NUMBER() Over(Partition by Occupation Order by Name) as Id
+--from occupations
+--)
+--Select 
+--Max(Case 
+--         when Occupation = 'Doctor' then Name 
+--		 end) as Doctor,
+--Max(Case 
+--         when Occupation = 'Professor' then Name 
+--		 end) as Professor,
+--Max(Case 
+--         when Occupation = 'Singer' then Name 
+--		 end) as Singer,
+--Max(Case 
+--         when Occupation = 'Actor' then Name 
+--		 end) as Actor
+--from cte
+--Group by id
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+--CREATE TABLE Purchase_tbl (
+--    Customer_Id INT,
+--    Category VARCHAR(50)
+--);
+
+--INSERT INTO Purchase_tbl (Customer_Id, Category) VALUES
+--(101, 'Electronics'),
+--(101, 'Clothing'),
+--(101, 'Groceries'),
+--(102, 'Electronics'),
+--(102, 'Clothing'),
+--(103, 'Groceries'),
+--(103, 'Clothing'),
+--(104, 'Electronics'),
+--(104, 'Clothing'),
+--(104, 'Groceries');
+
+
+
+--find customers who made purchases in every category available.
+
+--Select 
+--Customer_Id
+--from Purchase_tbl
+--Group by Customer_Id
+--Having COUNT(distinct Category) in (select count(distinct category)  from Purchase_tbl)
+
+
+
